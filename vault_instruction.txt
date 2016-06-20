@@ -1,0 +1,24 @@
+
+#generate JKS keystore for Vault
+keytool -genkey -alias vault -keystore <path_to_vault_keystore>/vault.keystore -keyalg RSA -keysize 1024 -storepass <password> -keypass <password> -dname "CN=Picketbox vault,OU=picketbox,O=JBoss,L=chicago,ST=il,C=us"
+
+##optionally you can run interactive mode by launching just ./vault.sh
+
+#get help info
+vault.sh -h
+
+#add new entry to Vault
+./vault.sh -k ./vault.keystore -e <path_to_encrypted_file_VAULT.data> -i <interation_value> -s <8_char_salt> -p <password_to_keystore> -b <vault_block> -a <attribute> -x <value_to_be_stored_by_vault>
+
+#after that you will find following information in the Vault output:
+VAULT::<vault_block>::<attribute>::1
+
+			
+#check if entry already exists in Vault
+./vault.sh -k ./vault.keystore -e <path_to_encrypted_file_VAULT.data> -i <interation_value> -s <8_char_salt> -p <password_to_keystore> -b <vault_block> -a <attribute> -c 
+
+#output after checking if it's there
+INFO: PBOX000361: Default Security Vault Implementation Initialized and Ready
+--> Password already exists.
+
+#after that you can replace your plain password with ${VAULT::<vault_block>::<attribute>::1} variable
