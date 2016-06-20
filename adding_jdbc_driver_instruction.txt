@@ -1,0 +1,45 @@
+#INSTALL MYSQL DRIVER ON JBOSS 6
+
+#if u don't have time, that's all you need
+jar -ft <jdbc_driver.jar> | grep -i driver
+mkdir -p $JBOSS_MODULESPATH/system/layers/base/com/mysql/main
+cp $JBOSS_MODULESPATH/system/layers/base/com/h2database/h2/main/module.xml $JBOSS_MODULESPATH/system/layers/base/com/mysql/main/
+cp <path_to_jdbc_driver.jar> $JBOSS_MODULESPATH/system/layers/base/com/mysql/main/
+./jboss-cli.sh -c --controller=192.168.0.8:9999 
+/subsystem=datasources/jdbc-driver=mysql:add(driver-name=mysql,driver-module-name=com.mysql,driver-class-name=com.mysql.jdbc.Driver)
+
+
+
+
+
+#Below are the same commands with proper comments
+
+#if you don't have setup $JBOSS_MODULESPATH var, take the value of '-mp' flag by cheking the jboss controller/standalone process
+## Optional: ps -ef | grep jboss -> verify -mp val, after that just setup the var in your shell
+## JBOSS_MODULESPATH=<value>
+
+#find your driver class, i.e. in mysql driver you will find com.mysql.jdbc.Driver.class file
+jar -ft <jdbc_driver.jar> | grep -i driver
+
+#create mandatory file structure in your modules direcotry
+mkdir -p $JBOSS_MODULESPATH/system/layers/base/com/mysql/main
+
+#to avoid any WHITESPACE issue, just copy already working h2 module.xml
+cp $JBOSS_MODULESPATH/system/layers/base/com/h2database/h2/main/module.xml $JBOSS_MODULESPATH/system/layers/base/com/mysql/main/
+
+#copy jar to your newly created module
+cp <path_to_jdbc_driver.jar> $JBOSS_MODULESPATH/system/layers/base/com/mysql/main/
+
+#once your module is added, register the driver in the configuration via the CLI 
+./jboss-cli.sh -c --controller=192.168.0.8:9999 #change the IP on your external one, if not using localhost
+
+#run !similar! cli command to requster your dirver
+/subsystem=datasources/jdbc-driver=mysql:add(driver-name=mysql,driver-module-name=com.mysql,driver-class-name=com.mysql.jdbc.Driver)
+
+#output
+20:33:40,866 INFO  [org.jboss.as.connector.subsystems.datasources] (management-handler-thread - 8) JBAS010404: Deploying non-JDBC-compliant driver class com.mysql.jdbc.Driver (version 5.1)
+{"outcome" => "success"}   # <--- if success, then success, wow, so genius 
+
+
+
+
