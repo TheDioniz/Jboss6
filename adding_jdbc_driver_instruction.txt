@@ -40,6 +40,6 @@ cp <path_to_jdbc_driver.jar> $JBOSS_MODULESPATH/system/layers/base/com/mysql/mai
 20:33:40,866 INFO  [org.jboss.as.connector.subsystems.datasources] (management-handler-thread - 8) JBAS010404: Deploying non-JDBC-compliant driver class com.mysql.jdbc.Driver (version 5.1)
 {"outcome" => "success"}   # <--- if success, then success, wow, so genius 
 
-
+#RESTART your JBoss to have visible JDBC Driver in the web console
 
 
