@@ -1,0 +1,26 @@
+#generate keystore with private key valid for 1 year
+keytool -genkeypair -alias the_alias -keyalg RSA -keystore keystore.jks -storepass keystore_password -dname "CN=example.com, OU=Example Unit, O=Example Inc., L=Warszawa, ST=Poland, C=PL" -keypass key_password -validity 365 -ext san=dns:www.example.com,dns:www.example2.com
+
+#generate csr from private key
+keytool -certreq -alias the_alias -keystore keystore.jks -file the_alias.csr
+
+
+#validate certificates
+openssl x509 -noout -modulus -in certificate.crt | openssl md5
+openssl rsa -noout -modulus -in privateKey.key | openssl md5
+openssl req -noout -modulus -in CSR.csr | openssl md5
+
+
+#generate private key (without passphrase) and csr as separate files with Distinguished Name & Subject Alternative Names & Email
+openssl req -out CSR.csr -new -newkey rsa:2048 -nodes -keyout privateKey.key -subj '/C=US/ST=New York/L=New York/O=End Point/OU=Hosting Team/CN=www.endpoint.com/emailAddress=administrative-not-existent-address@our-awesome-domain.com/subjectAltName=DNS.1=endpoint.com,DNS.2=usually-not-convered-domain.endpoint.com,DNS.3=multiple-domains-crt.endpoint.com'
+
+
+#Useful resources:
+http://www.lmhproductions.com/37/common-java-keytool-commands/
+https://www.digitalocean.com/community/tutorials/openssl-essentials-working-with-ssl-certificates-private-keys-and-csrs
+
+##Other keytool commands
+
+#Import a signed primary certificate to an existing Java keystore 
+# !! imported CRT alias has to match private key alias !!
+keytool -import -trustcacerts -alias your_domain -file your_domain.crt -keystore keystore.jks  
